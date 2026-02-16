@@ -1,26 +1,309 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --primary: 212 255 63;
+  /* #D4FF3F - Weavy accent */
+  --primary-foreground: 10 10 10;
+  --secondary: 100 116 139;
+  --accent: 168 85 247;
+  --success: 34 197 94;
+  --warning: 251 191 36;
+  --danger: 239 68 68;
+  --background: 10 10 10;
+  /* #0A0A0A - Weavy canvas */
+  --foreground: 248 250 252;
+  --card: 18 18 18;
+  /* #121212 - Weavy node */
+  --border: 40 40 40;
+  --muted: 90 90 90;
+  --header: 0 0 0;
+  /* Pure black */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  min-height: 100vh;
+  font-size: 12px;
+  /* Weavy uses small fonts */
+  font-family: Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Node execution states */
+.node-idle {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.node-pending {
+  border-color: rgb(var(--warning));
+  animation: pulse-border 2s infinite;
+}
+
+.node-running {
+  border-color: rgb(var(--primary));
+  box-shadow: 0 0 15px rgba(var(--primary), 0.3);
+  animation: pulse-glow 1.5s infinite;
+}
+
+.node-success {
+  border-color: rgb(var(--success));
+}
+
+.node-failed {
+  border-color: rgb(var(--danger));
+}
+
+.node-skipped {
+  border-color: rgb(var(--muted));
+  opacity: 0.6;
+}
+
+@keyframes pulse-border {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px rgba(var(--primary), 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 25px rgba(var(--primary), 0.5);
+  }
+}
+
+/* React Flow - Weavy style */
+.react-flow__node {
+  transition: all 0.15s ease;
+}
+
+.react-flow__edge-path {
+  stroke-width: 1.5;
+}
+
+.react-flow__edge.animated path {
+  stroke-dasharray: 5;
+  animation: dash 0.5s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(var(--primary));
+  border: 2px solid #0A0A0A;
+  transition: all 0.15s ease;
+}
+
+.react-flow__handle:hover {
+  transform: scale(1.3);
+}
+
+.react-flow__handle-left {
+  left: -4px;
+}
+
+.react-flow__handle-right {
+  right: -4px;
+}
+
+/* Hide minimap by default */
+.react-flow__minimap {
+  display: none !important;
+}
+
+.react-flow__controls {
+  background: #1a1a1a;
+  border-radius: 6px;
+  border: 1px solid #2a2a2a;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.react-flow__controls-button {
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 6px;
+  width: 28px;
+  height: 28px;
+  transition: all 0.15s ease;
+}
+
+.react-flow__controls-button:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor;
+  width: 14px;
+  height: 14px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Weavy-style buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: rgb(var(--primary));
+  color: rgb(var(--primary-foreground));
+}
+
+.btn-primary:hover {
+  background: rgba(var(--primary), 0.85);
+}
+
+.btn-secondary {
+  background: #1a1a1a;
+  color: #ccc;
+  border: 1px solid #333;
+}
+
+.btn-secondary:hover {
+  background: #252525;
+  color: #fff;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #888;
+}
+
+.btn-ghost:hover {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Compact inputs */
+.input {
+  width: 100%;
+  padding: 6px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+  background: #0a0a0a;
+  border: 1px solid #2a2a2a;
+  color: #e5e5e5;
+  transition: all 0.15s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: rgba(var(--primary), 0.5);
+}
+
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Card styles */
+.card {
+  background: #121212;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 500;
+  border-radius: 4px;
+}
+
+.badge-success {
+  background: rgba(var(--success), 0.15);
+  color: rgb(var(--success));
+}
+
+.badge-danger {
+  background: rgba(var(--danger), 0.15);
+  color: rgb(var(--danger));
+}
+
+.badge-warning {
+  background: rgba(var(--warning), 0.15);
+  color: rgb(var(--warning));
+}
+
+.badge-info {
+  background: rgba(var(--primary), 0.15);
+  color: rgb(var(--primary));
+}
+
+/* Loading spinner */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #333;
+  border-top-color: rgb(var(--primary));
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

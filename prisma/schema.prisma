@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RunStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum RunScope {
+  SINGLE
+  PARTIAL
+  FULL
+}
+
+enum NodeStatus {
+  IDLE
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  SKIPPED
+}
+
+model Workflow {
+  id          String   @id @default(cuid())
+  userId      String   @db.VarChar(255)
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  nodes       Json     @default("[]")
+  edges       Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  runs        Run[]
+
+  @@index([userId])
+}
+
+model Run {
+  id          String    @id @default(cuid())
+  workflowId  String
+  workflow    Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  userId      String    @db.VarChar(255)
+  status      RunStatus @default(PENDING)
+  scope       RunScope  @default(FULL)
+  selectedNodes String[] @default([])
+  duration    Int?
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  nodeLogs    NodeLog[]
+  triggerId   String?   @db.VarChar(255)
+
+  @@index([workflowId])
+  @@index([userId])
+}
+
+model NodeLog {
+  id          String     @id @default(cuid())
+  runId       String
+  run         Run        @relation(fields: [runId], references: [id], onDelete: Cascade)
+  nodeId      String     @db.VarChar(255)
+  nodeType    String     @db.VarChar(100)
+  status      NodeStatus @default(PENDING)
+  input       Json?
+  output      Json?
+  error       String?    @db.Text
+  duration    Int?
+  startedAt   DateTime   @default(now())
+  completedAt DateTime?
+
+  @@index([runId])
+  @@index([nodeId])
+}
