@@ -83,7 +83,3 @@ Run production build locally to verify:
 npm run build
 npm start
 ```
-
-## 📝 License
-
-MIT
